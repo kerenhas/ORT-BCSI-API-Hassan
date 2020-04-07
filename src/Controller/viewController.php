@@ -14,16 +14,19 @@ class viewController extends AbstractController
 * @Route("/view",name="projet_view")
 
 */
-public function view(){
+public function view()
+{
 
-$clientCurl = new CurlHttpClient();
-$response=$clientCurl->request("POST", "http://concoursphoto.ort-france.fr/api/matrice",
-            ['headers' => ['Content-Type' => 'application/json'],'body' => '{}']);
+            $clientCurl = new CurlHttpClient();
+            $response=$clientCurl->request("POST", "http://concoursphoto.ort-france.fr/api/matrice",
+                        ['headers' => ['Content-Type' => 'application/json'],'body' => '{}']);
 
-            $Content=$response->getContent();
-dd($Content);
-return new Response('ORT-CSI TP API ');
-					}
+                        $Content=$response->getContent();
+            dd($Content);
+            return new Response('ORT-CSI TP API ');
+                    
+        
+}
 }
 
  ?>
