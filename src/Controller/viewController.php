@@ -11,8 +11,19 @@ class viewController extends AbstractController
 
 {
 /**
-* @Route("/view",name="projet_view")
+* @Route("/",name="projet_viewHome")
+* @return Reponse
+*/
+public function viewHome()
+{
+            return new Response('Bienvenue dans la page home ');                   
+        
+}
 
+
+/**
+* @Route("/view",name="projet_view")
+* @return Reponse
 */
 public function view()
 {
