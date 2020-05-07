@@ -6,20 +6,13 @@ use Symfony\Component\HttpClient\CurlHttpClient;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Contracts\HttpClient\Exception\TransportExeptionInterface;
+use App\Api\ortApi;
+use App\Api\cacheApi;
 
 class viewController extends AbstractController
 
 {
-/**
-* @Route("/",name="projet_viewHome")
-* @return Reponse
-*/
-public function viewHome()
-{
-            return new Response('Bienvenue dans la page home ');                   
-        
-}
-
 
 /**
 * @Route("/view",name="projet_view")
@@ -27,17 +20,40 @@ public function viewHome()
 */
 public function view()
 {
-
-            $clientCurl = new CurlHttpClient();
-            $response=$clientCurl->request("POST", "http://concoursphoto.ort-france.fr/api/matrice",
-                        ['headers' => ['Content-Type' => 'application/json'],'body' => '{}']);
-
-                        $Content=$response->getContent();
-            dd($Content);
-            return new Response('ORT-CSI TP API ');
-                    
+    return new Response('Bienvenue dans la page home ');                   
         
 }
+
+/**
+* @Route("/",name="projet_api")
+* @return Reponse
+*/
+public function api()
+{
+    $json = array();
+    // on met notre api dans laquelle on peut lire 
+   $api = new ortApi();
+
+   // dans notre json on aura notre resultat, ici ce era l'ensemble des formations
+  if($api->getError() !=null)
+  {
+    $json = $api->getResults();
+  }
+  
+   $poles=$api->getPole();
+
+   $cache = new cacheApi();
+   $cache->createRepo($poles);
+
+   //Ici on recupere les formations pour chq pole
+   $form = $api->getFormation("MODE");
+   
+   return $this->render('base.html.twig',[
+       'reponse' =>$json,
+       'erreur' =>$api->getError()
+   ]);
+}
+
 }
 
  ?>
