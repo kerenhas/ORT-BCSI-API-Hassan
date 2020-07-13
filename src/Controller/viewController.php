@@ -8,6 +8,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Contracts\HttpClient\Exception\TransportExeptionInterface;
 use App\Api\ortApi;
+use App\Api\formationApi;
 use App\Api\cacheApi;
 
 class viewController extends AbstractController
@@ -15,44 +16,84 @@ class viewController extends AbstractController
 {
 
 /**
-* @Route("/view",name="projet_view")
+* @Route("/",name="accueil")
 * @return Reponse
 */
-public function view()
+function index()
 {
-    return new Response('Bienvenue dans la page home ');                   
-        
+    return new Response("Bienvenue dans la page d'accueil");
 }
 
+
 /**
-* @Route("/",name="projet_api")
+* @Route("/load",name="projet_api")
 * @return Reponse
 */
-public function api()
+public function loadApiOrt()
 {
     $json = array();
-    // on met notre api dans laquelle on peut lire 
+    // on met notre api dans laquelle on peut la lire 
    $api = new ortApi();
 
-   // dans notre json on aura notre resultat, ici ce era l'ensemble des formations
+   // dans notre json on aura notre resultat, ici ce sera l'ensemble des formations
   if($api->getError() !=null)
   {
     $json = $api->getResults();
   }
-  
+ 
+  // retoune un tableau avec chq poles
    $poles=$api->getPole();
 
    $cache = new cacheApi();
-   $cache->createRepo($poles);
+   // on creer un dossier pour chaque formation
+   try {
+    $cache->createRepo($poles);
+   } catch (IOExceptionInterface $exception) {
+    // $api->throwException("pvf2");
+    // return false;
+    return new Response($api->throwException("2"));
+   }
 
-   //Ici on recupere les formations pour chq pole
-   $form = $api->getFormation("MODE");
-   
+   try
+   {
+       //creation des fihiers json par formation
+    return new Response($api->createFile());
+   } 
+    catch (IOExceptionInterface $exception) 
+    {
+        return new Response($api->throwException("3"));
+    //  $api->throwException("pvf3");
+    //  return false;
+    } 
+
    return $this->render('base.html.twig',[
-       'reponse' =>$json,
+       'reponse' =>$poles,
        'erreur' =>$api->getError()
    ]);
+
 }
+
+    /**
+     * @Route("/view/{id}", name="viewFormation")
+     */
+    public function viewFormation($id)
+    {     
+        //Lecture de l’ensemble des fiches formations dans le répertoire var/formations/* 
+       $formation=new formationApi();
+
+        // on met notre api dans laquelle on peut lire 
+         $api = new ortApi();
+
+        // retoune un tableau avec chq formations
+        $poles=$api->getPole();
+
+        if(!empty($formation->getFormation($id, $poles))){
+           return new Response($formation->getFormation($id, $poles));
+        }else{
+           return new Response($formation->throwException("4"));
+        }
+
+    }
 
 }
 

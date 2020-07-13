@@ -23,16 +23,16 @@ class cacheApi
 
         //la on creer notre dossier ou y'aura tous nos dossier pour chaque pole
        // on fais une condition pour savoir si le dossier n'existe pas deja
-       if(!file_exists($path."/var/cacheApi"))
+       if(!file_exists($path."/var/formations"))
        {
-        mkdir($path."/var/cacheApi");
+        mkdir($path."/var/formations");
        }
        // maintenant on va creer pour chaque pole un repo
        foreach($poles as $pole)
        {
-            if(!file_exists($path."/var/cacheApi/".$pole))
+            if(!file_exists($path."/var/formations/".$pole))
             {
-            mkdir($path."/var/cacheApi/".$pole);
+            mkdir($path."/var/formations/".$pole);
             }
            
        }

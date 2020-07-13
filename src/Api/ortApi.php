@@ -23,26 +23,27 @@ class ortApi
         $json = array();
         
         try {
-            $response=$clientCurl->request("POST", "http://concoursphoto.ort-france.fr/api/matrice",
-            ['headers' => ['Content-Type' => 'application/json'],'body' => '{}']);
+                $response=$clientCurl->request("POST", "http://concoursphoto.ort-france.fr/api/matrice",
+                ['headers' => ['Content-Type' => 'application/json'],'body' => '{}']);
+        
+                $Content=$response->getContent();
+
+                if($response->getStatusCode() == 201)
+                {
+                //mettre la response dans un tableau
+                $json = $response->toArray();
+                // on lit le fichier json qui est un tableau 
+                // dans ce tableau y'a le resultat qui est aussi un tableau avec toutes les informations
+                // ici on a donc recuperer dans resultat un tableau avec l'ensemble des formations
+                $this->resultat = $json['results'][0];
+               
+                }else
+                {  
+                   return $this->throwException("1");
+                }
     
-            $Content=$response->getContent();
-    
-            if($response->getStatusCode() == 201)
-            {
-             //mettre la response dans un tableau
-              $json = $response->toArray();
-              // on lit ke fichier json qui est un tableau 
-              // dans ce tableau y'a le resultat qui est aussi un tableau avec toutes les informations
-              // ici on a donc recuperer dans resultat un tableau avec l'ensemble des formations
-              $this->resultat = $json['results'][0];
-           //  dd($resultat); 
-            }else
-            {
-                $this->error = "erreur https";
             }
-    
-            } catch (TransportExeptionInterface $e) {
+             catch (TransportExeptionInterface $e) {
                 $this->error = $e->getMessage();
             }
     }
@@ -51,7 +52,11 @@ class ortApi
     {
          return $this->resultat;
     }
-    //on doit faire des repertoires poles  pour ca on va d'abord tous les recuper
+
+
+    //on doit faire des repertoires poles  pour ca on va d'abord tous les recuperer
+    //on parcours donc rsultat( qui est le tableau des formations ) pour mettre chq formations dans le tableau pole
+    
     public function getPole()
     {
         $tblPole = array();
@@ -63,30 +68,74 @@ class ortApi
         return $tblPole;
     }
 
-    //on retourne les informations pour chq pole 
-    public function getFormation($pole)
+    //fonction qui creer un tableau a chq formation d'un pole
+    public function createTabFormPole($pole)
     {
-        $tblForm= $this->getResults()[$pole];
-        //une fois qu'on a recupere on va les mettre dans le fichier 
+        $tblForm= $this->getResults()[$pole];  
+        $tblDetail= array();
         foreach($tblForm as $param => $key)
         {
-            //on creer un fichier si y'en a pas deja un 
-            $path = dirname(__DIR__, 2);
-
-           // maintenant on va creer pour chaque param un repo
-                if(!file_exists($path."/var/cacheApi/".$pole."/".$param))
-                {
-                mkdir($path."/var/cacheApi/".$pole."/".$param);
-                }
-
+            $tblDetail[]= $param;
         }
-        return $tblForm;
+       return $tblDetail;
+    }
+
+
+// fonction qui permet d'ecrire un fichier json par formation d'un pole
+    public function writeFile($pole)
+    {
+        // on recuperer toutes les formations pour chaque pole
+        $tblForm =$this-> createTabFormPole($pole);
+        // chemin pour le fichier
+        $path = dirname(__DIR__, 2);
+        $nbWriteFile=0; 
+
+        // maintenant on va creer un fichier pour chaque pole
+        foreach($tblForm as $param => $key)
+        {
+            // on recupere le contenu
+           $tblDetail= $this->getResults()[$pole];  
+           $result = json_encode($tblDetail[$key]);  
+            //creation d'un fchier     
+            file_put_contents($path."/var/formations/".$pole."/".$key.".json", $result);
+            $nbWriteFile++;
+        }
+        // le nombre de fichier creer 
+        return $nbWriteFile;
+    }
+
+    //on doit creer tous les fichiers pour tous les poles
+    public function createFile()
+    {
+            $nbRepoForm=0;         
+            $nbWriteFile=0;
+            // on parcour tous les poles 
+            foreach($this->resultat as $form => $key)
+            {        
+               $nbWriteFile +=$this->writeFile($form);
+               $nbRepoForm++;
+            }  
+            // creer un tableau avec le nombre de pole et le nombre de fichier creer 
+            $nb=array('nbWriteFile' => $nbWriteFile, "nbRepoForm" => $nbRepoForm );
+            // aff5chage du tableau avec les nombres en json
+             return json_encode($nb);
     }
 
    public function getError()
    {
       return $this->error;
    }
-}
 
+   // fonction qui renvoit les erreurs au format json
+   public function throwException($type)
+   {
+    return json_encode([
+        'Event' => 'api/load',
+        'Error' => 'pvf',
+        'Type' => 'type'
+       ]);
+   }
+
+}
+    
 ?>
