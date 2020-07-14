@@ -23,7 +23,7 @@ class formationApi
     {
         $path = dirname(__DIR__, 2);
 
-        $cache = new FilesystemAdapter();
+        // $cache = new FilesystemAdapter();
         
         // on parcours tous les repos
         foreach ($poles as $form)

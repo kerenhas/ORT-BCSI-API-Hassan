@@ -81,7 +81,7 @@ class ortApi
     }
 
 
-// fonction qui permet d'ecrire un fichier json par formation d'un pole
+        // fonction qui permet d'ecrire un fichier json par formation d'un pole
     public function writeFile($pole)
     {
         // on recuperer toutes les formations pour chaque pole
@@ -95,9 +95,12 @@ class ortApi
         {
             // on recupere le contenu
            $tblDetail= $this->getResults()[$pole];  
-           $result = json_encode($tblDetail[$key]);  
-            //creation d'un fchier     
-            file_put_contents($path."/var/formations/".$pole."/".$key.".json", $result);
+           $result = json_encode($tblDetail[$key]);      
+           // pour un affichage plus propre
+           $text = json_decode($result);
+         
+          //creation d'un fchier     
+         file_put_contents($path."/var/formations/".$pole."/".$key.".json",  "<pre>".print_r($text, true)."</pre>" );
             $nbWriteFile++;
         }
         // le nombre de fichier creer 
