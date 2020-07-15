@@ -18,14 +18,15 @@ class formationApi
        
     }
 
-   // fonction qui va chercher la formation dans les poles passes en parametres
+   
+   /**
+    * fonction qui va chercher la formation dans les poles passes en parametres
+    * @return le bon fichier 
+    */
     public function getFormation($id, $poles)
     {
         $path = dirname(__DIR__, 2);
-
-        // $cache = new FilesystemAdapter();
-        
-        // on parcours tous les repos
+         // on parcours tous les repos
         foreach ($poles as $form)
         {
             // si c'est e bon fichier json on le retourne

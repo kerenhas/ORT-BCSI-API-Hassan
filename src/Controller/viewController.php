@@ -31,10 +31,10 @@ function index()
 */
 public function loadApiOrt()
 {
-    $json = array();
-    // on met notre api dans laquelle on peut la lire 
-   $api = new ortApi();
+   $json = array();
 
+    // on met notre api dans laquelle on peut la lire 
+    $api = new ortApi();
    // dans notre json on aura notre resultat, ici ce sera l'ensemble des formations
   if($api->getError() !=null)
   {
@@ -46,12 +46,11 @@ public function loadApiOrt()
 
    $cache = new cacheApi();
    // on creer un dossier pour chaque formation
-   try {
-    $cache->createRepo($poles);
+   try 
+   {
+        $cache->createRepo($poles);
    } catch (IOExceptionInterface $exception) {
-    // $api->throwException("pvf2");
-    // return false;
-    return new Response($api->throwException("2"));
+        return new Response($api->throwException("2"));
    }
 
    try
@@ -62,14 +61,7 @@ public function loadApiOrt()
     catch (IOExceptionInterface $exception) 
     {
         return new Response($api->throwException("3"));
-    //  $api->throwException("pvf3");
-    //  return false;
     } 
-
-   return $this->render('base.html.twig',[
-       'reponse' =>$poles,
-       'erreur' =>$api->getError()
-   ]);
 
 }
 
@@ -81,7 +73,7 @@ public function loadApiOrt()
         //Lecture de l’ensemble des fiches formations dans le répertoire var/formations/* 
        $formation=new formationApi();
 
-        // on met notre api dans laquelle on peut lire 
+        // on appelle la classe API pour la methode getPole
          $api = new ortApi();
 
         // retoune un tableau avec chq formations

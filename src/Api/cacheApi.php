@@ -14,7 +14,10 @@ class cacheApi
        
     }
 
-    // dans cette classe on va devoir recuperer nos poles et creer des repertoire
+    /**
+     * dans cette fonction on va devoir recuperer nos poles et creer des repertoire
+     * @param  tableau poles 
+     */
     public function createRepo($poles)
     {
         // donc d'abord on va essayer de trouver ds quel dossier on se trouve 
