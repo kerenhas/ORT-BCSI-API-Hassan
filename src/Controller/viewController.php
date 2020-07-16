@@ -80,7 +80,7 @@ public function loadApiOrt()
         $poles=$api->getPole();
 
         if(!empty($formation->getFormation($id, $poles))){
-            print "<font color='red'>Les détails de la formation $id : </font>";
+            // print "<font color='red'>Les détails de la formation $id : </font>";
            return new Response($formation->getFormation($id, $poles));
         }else{
            return new Response($formation->throwException("4"));
