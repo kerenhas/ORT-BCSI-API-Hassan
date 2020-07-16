@@ -106,10 +106,8 @@ class ortApi
             // on recupere le contenu
            $tblDetail= $this->getResults()[$pole];  
            $result = json_encode($tblDetail[$key]);      
-           // pour un affichage plus propre
-           $text = json_decode($result);  
           //creation d'un fchier     
-         file_put_contents($path."/var/formations/".$pole."/".$key.".json",  "<pre>".print_r($text, true)."</pre>" );
+         file_put_contents($path."/var/formations/".$pole."/".$key.".json",  $result );
             $nbWriteFile++;
         }
         // le nombre de fichier creer 
