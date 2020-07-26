@@ -105,7 +105,7 @@ class ortApi
         {
             // on recupere le contenu
            $tblDetail= $this->getResults()[$pole];  
-           $result = json_encode($tblDetail[$key]);      
+           $result = json_encode($tblDetail[$key]);         
           //creation d'un fchier     
          file_put_contents($path."/var/formations/".$pole."/".$key.".json",  $result );
             $nbWriteFile++;
@@ -154,5 +154,3 @@ class ortApi
    }
 
 }
-    
-?>
